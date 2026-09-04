@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ReturnGuard | AI Return Risk Manager</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f3f6fa;
+            color: #172033;
+        }
+
+        /* =========================
+           HEADER
+        ========================= */
+
+        .header {
+            background: #101828;
+            color: white;
+            padding: 22px 50px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 30px;
+            letter-spacing: -0.5px;
+        }
+
+        .brand p {
+            margin: 5px 0 0;
+            color: #b8c2d1;
+            font-size: 15px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #18263a;
+            padding: 9px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            background: #22c55e;
+            border-radius: 50%;
+        }
+
+        /* =========================
+           MAIN CONTAINER
+        ========================= */
+
+        .container {
+            max-width: 1150px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        /* =========================
+           CARDS
+        ========================= */
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 18px rgba(16, 24, 40, 0.07);
+            border: 1px solid #e6eaf0;
+        }
+
+        .card-title {
+            margin: 0;
+            font-size: 21px;
+            color: #101828;
+        }
+
+        .card-subtitle {
+            margin: 7px 0 25px;
+            color: #667085;
+            font-size: 14px;
+        }
+
+        /* =========================
+           FORM
+        ========================= */
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 19px 22px;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #344054;
+            margin-bottom: 7px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px 13px;
+            border: 1px solid #d0d5dd;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #172033;
+            background: white;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #344054;
+            box-shadow: 0 0 0 3px rgba(52, 64, 84, 0.08);
+        }
+
+        /* =========================
+           BUTTON
+        ========================= */
+
+        .button-container {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        button {
+            border: none;
+            background: #101828;
+            color: white;
+            padding: 14px 34px;
+            border-radius: 9px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background: #263449;
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            background: #98a2b3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 15px;
+            color: #667085;
+            font-size: 14px;
+        }
+
+        /* =========================
+           ERROR
+        ========================= */
+
+        .error {
+            display: none;
+            margin-top: 20px;
+            padding: 14px 16px;
+            background: #fef3f2;
+            color: #b42318;
+            border: 1px solid #fecdca;
+            border-radius: 9px;
+            font-size: 14px;
+        }
+
+        /* =========================
+           RESULTS
+        ========================= */
+
+        .result {
+            display: none;
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+        }
+
+        .result-label {
+            font-size: 13px;
+            color: #667085;
+            background: #f2f4f7;
+            padding: 7px 12px;
+            border-radius: 20px;
+        }
+
+        .result-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 18px;
+        }
+
+        .result-box {
+            background: #f8fafc;
+            border: 1px solid #eaecf0;
+            border-radius: 12px;
+            padding: 23px 15px;
+            text-align: center;
+        }
+
+        .result-box h3 {
+            margin: 0 0 10px;
+            font-size: 13px;
+            color: #667085;
+            font-weight: 700;
+        }
+
+        .result-box p {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .low {
+            color: #15803d;
+        }
+
+        .medium {
+            color: #c98a00;
+        }
+
+        .high {
+            color: #dc2626;
+        }
+
+        /* =========================
+           DECISION BANNER
+        ========================= */
+
+        .decision-banner {
+            margin-top: 20px;
+            padding: 18px 20px;
+            border-radius: 11px;
+            background: #f8fafc;
+            border: 1px solid #eaecf0;
+        }
+
+        .decision-banner strong {
+            color: #101828;
+        }
+
+        #decisionMessage {
+            margin-top: 5px;
+            color: #667085;
+            font-size: 14px;
+        }
+
+        /* =========================
+           INFORMATION
+        ========================= */
+
+        .info {
+            margin-top: 20px;
+            padding: 19px 20px;
+            background: #f8fafc;
+            border: 1px solid #eaecf0;
+            border-radius: 11px;
+            line-height: 2;
+            font-size: 14px;
+        }
+
+        .info strong {
+            color: #344054;
+        }
+
+        /* =========================
+           EXPLANATION
+        ========================= */
+
+        .explanation {
+            margin-top: 20px;
+            padding: 21px 22px;
+            background: #f8fafc;
+            border: 1px solid #eaecf0;
+            border-radius: 11px;
+        }
+
+        .explanation h3 {
+            margin: 0 0 14px;
+            color: #101828;
+            font-size: 17px;
+        }
+
+        .explanation ul {
+            margin: 0;
+            padding-left: 22px;
+        }
+
+        .explanation li {
+            margin-bottom: 9px;
+            color: #475467;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .explanation li:last-child {
+            margin-bottom: 0;
+        }
+
+        /* =========================
+           HOW IT WORKS
+        ========================= */
+
+        .how-it-works {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 18px;
+        }
+
+        .step {
+            padding: 18px;
+            background: #f8fafc;
+            border: 1px solid #eaecf0;
+            border-radius: 10px;
+        }
+
+        .step-number {
+            font-size: 12px;
+            font-weight: bold;
+            color: #667085;
+            margin-bottom: 8px;
+        }
+
+        .step h4 {
+            margin: 0 0 7px;
+            font-size: 14px;
+        }
+
+        .step p {
+            margin: 0;
+            color: #667085;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        .footer {
+            text-align: center;
+            color: #98a2b3;
+            font-size: 12px;
+            padding: 5px 0 30px;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 750px) {
+
+            .header {
+                padding: 20px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .container {
+                margin-top: 20px;
+            }
+
+            .form-grid,
+            .result-grid,
+            .how-it-works {
+                grid-template-columns: 1fr;
+            }
+
+            .result-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+    </style>
+
+</head>
+
+
+<body>
+
+    <!-- =========================
+         HEADER
+    ========================= -->
+
+    <header class="header">
+
+        <div class="brand">
+
+            <h1>ReturnGuard</h1>
+
+            <p>
+                AI-Powered Return Risk Manager
+            </p>
+
+        </div>
+
+
+        <div class="status">
+
+            <span class="status-dot"></span>
+
+            API Online
+
+        </div>
+
+    </header>
+
+
+    <main class="container">
+
+
+        <!-- =========================
+             TRANSACTION FORM
+        ========================= -->
+
+        <section class="card">
+
+            <h2 class="card-title">
+                Transaction Analysis
+            </h2>
+
+            <p class="card-subtitle">
+                Enter transaction details to evaluate return risk.
+            </p>
+
+
+            <div class="form-grid">
+
+
+                <div class="field">
+
+                    <label>
+                        Order Item ID
+                    </label>
+
+                    <input
+                        id="order_item_id"
+                        type="number"
+                        value="999001"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Order Date
+                    </label>
+
+                    <input
+                        id="order_date"
+                        type="date"
+                        value="2016-09-10"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Customer ID
+                    </label>
+
+                    <input
+                        id="user_id"
+                        type="number"
+                        value="12345"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Product ID
+                    </label>
+
+                    <input
+                        id="item_id"
+                        type="number"
+                        value="500"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Size
+                    </label>
+
+                    <input
+                        id="item_size"
+                        type="text"
+                        value="M"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Color
+                    </label>
+
+                    <input
+                        id="item_color"
+                        type="text"
+                        value="black"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Brand ID
+                    </label>
+
+                    <input
+                        id="brand_id"
+                        type="number"
+                        value="30"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Price
+                    </label>
+
+                    <input
+                        id="item_price"
+                        type="number"
+                        step="0.01"
+                        value="59.90"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Customer Title
+                    </label>
+
+                    <input
+                        id="user_title"
+                        type="text"
+                        value="Mrs"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Date of Birth
+                    </label>
+
+                    <input
+                        id="user_dob"
+                        type="date"
+                        value="1980-01-15"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        State
+                    </label>
+
+                    <input
+                        id="user_state"
+                        type="text"
+                        value="Saxony"
+                    >
+
+                </div>
+
+
+                <div class="field">
+
+                    <label>
+                        Registration Date
+                    </label>
+
+                    <input
+                        id="user_reg_date"
+                        type="date"
+                        value="2015-06-01"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="button-container">
+
+                <button
+                    id="analyzeButton"
+                    onclick="analyzeRisk()"
+                >
+                    Analyze Return Risk
+                </button>
+
+            </div>
+
+
+            <div
+                id="loading"
+                class="loading"
+            >
+                Analyzing transaction...
+            </div>
+
+
+            <div
+                id="error"
+                class="error"
+            ></div>
+
+        </section>
+
+
+        <!-- =========================
+             RISK RESULT
+        ========================= -->
+
+        <section
+            id="result"
+            class="card result"
+        >
+
+            <div class="result-header">
+
+                <h2 class="card-title">
+                    Risk Assessment
+                </h2>
+
+                <span class="result-label">
+                    AI Decision Engine
+                </span>
+
+            </div>
+
+
+            <div class="result-grid">
+
+
+                <div class="result-box">
+
+                    <h3>
+                        RISK SCORE
+                    </h3>
+
+                    <p id="risk_score">
+                        -
+                    </p>
+
+                </div>
+
+
+                <div class="result-box">
+
+                    <h3>
+                        RISK BAND
+                    </h3>
+
+                    <p id="risk_band">
+                        -
+                    </p>
+
+                </div>
+
+
+                <div class="result-box">
+
+                    <h3>
+                        DECISION
+                    </h3>
+
+                    <p id="decision">
+                        -
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="decision-banner">
+
+                <strong id="decisionTitle">
+                    Decision
+                </strong>
+
+                <div id="decisionMessage">
+                    ReturnGuard has evaluated this transaction.
+                </div>
+
+            </div>
+
+
+            <div class="info">
+
+                <strong>
+                    Customer Status:
+                </strong>
+
+                <span id="new_user">
+                    -
+                </span>
+
+                <br>
+
+
+                <strong>
+                    Calibrated Probability:
+                </strong>
+
+                <span id="probability">
+                    -
+                </span>
+
+                <br>
+
+
+                <strong>
+                    Model:
+                </strong>
+
+                <span id="model">
+                    -
+                </span>
+
+            </div>
+
+
+            <!-- =========================
+                 EXPLANATION
+            ========================= -->
+
+            <div class="explanation">
+
+                <h3>
+                    Why this risk?
+                </h3>
+
+                <ul id="risk_explanation">
+
+                    <li>
+                        Risk factors will appear here.
+                    </li>
+
+                </ul>
+
+            </div>
+
+        </section>
+
+
+        <!-- =========================
+             HOW IT WORKS
+        ========================= -->
+
+        <section class="card">
+
+            <h2 class="card-title">
+                How ReturnGuard Works
+            </h2>
+
+            <p class="card-subtitle">
+                A point-in-time machine learning pipeline designed for return-risk decisions.
+            </p>
+
+
+            <div class="how-it-works">
+
+
+                <div class="step">
+
+                    <div class="step-number">
+                        STEP 01
+                    </div>
+
+                    <h4>
+                        Transaction
+                    </h4>
+
+                    <p>
+                        Customer and product transaction details are submitted.
+                    </p>
+
+                </div>
+
+
+                <div class="step">
+
+                    <div class="step-number">
+                        STEP 02
+                    </div>
+
+                    <h4>
+                        Features
+                    </h4>
+
+                    <p>
+                        Historical behavior and transaction features are generated using only available history.
+                    </p>
+
+                </div>
+
+
+                <div class="step">
+
+                    <div class="step-number">
+                        STEP 03
+                    </div>
+
+                    <h4>
+                        AI Model
+                    </h4>
+
+                    <p>
+                        A frozen CatBoost model evaluates the transaction using 25 features.
+                    </p>
+
+                </div>
+
+
+                <div class="step">
+
+                    <div class="step-number">
+                        STEP 04
+                    </div>
+
+                    <h4>
+                        Decision
+                    </h4>
+
+                    <p>
+                        Calibrated risk is converted into an operational action.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <div class="footer">
+
+            ReturnGuard • AI Return Risk Management
+
+        </div>
+
+    </main>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================= -->
+
+    <script>
+
+        async function analyzeRisk() {
+
+            const errorBox =
+                document.getElementById("error");
+
+            const resultBox =
+                document.getElementById("result");
+
+            const loading =
+                document.getElementById("loading");
+
+            const button =
+                document.getElementById("analyzeButton");
+
+
+            errorBox.style.display = "none";
+
+            resultBox.style.display = "none";
+
+            loading.style.display = "block";
+
+            button.disabled = true;
+
+
+            const transaction = {
+
+                order_item_id:
+                    Number(
+                        document.getElementById(
+                            "order_item_id"
+                        ).value
+                    ),
+
+                order_date:
+                    document.getElementById(
+                        "order_date"
+                    ).value,
+
+                user_id:
+                    Number(
+                        document.getElementById(
+                            "user_id"
+                        ).value
+                    ),
+
+                item_id:
+                    Number(
+                        document.getElementById(
+                            "item_id"
+                        ).value
+                    ),
+
+                item_size:
+                    document.getElementById(
+                        "item_size"
+                    ).value,
+
+                item_color:
+                    document.getElementById(
+                        "item_color"
+                    ).value,
+
+                brand_id:
+                    Number(
+                        document.getElementById(
+                            "brand_id"
+                        ).value
+                    ),
+
+                item_price:
+                    Number(
+                        document.getElementById(
+                            "item_price"
+                        ).value
+                    ),
+
+                user_title:
+                    document.getElementById(
+                        "user_title"
+                    ).value,
+
+                user_dob:
+                    document.getElementById(
+                        "user_dob"
+                    ).value || null,
+
+                user_state:
+                    document.getElementById(
+                        "user_state"
+                    ).value,
+
+                user_reg_date:
+                    document.getElementById(
+                        "user_reg_date"
+                    ).value
+            };
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "http://127.0.0.1:8000/predict",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify(
+                                    transaction
+                                )
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.detail?.message ||
+                        "Prediction failed."
+                    );
+
+                }
+
+
+                const prediction =
+                    data.prediction;
+
+
+                /* =========================
+                   RISK SCORE
+                ========================= */
+
+                document.getElementById(
+                    "risk_score"
+                ).textContent =
+                    Number(
+                        prediction.risk_score
+                    ).toFixed(2)
+                    + "/100";
+
+
+                /* =========================
+                   RISK BAND
+                ========================= */
+
+                const riskBand =
+                    document.getElementById(
+                        "risk_band"
+                    );
+
+
+                riskBand.textContent =
+                    prediction.risk_band;
+
+
+                riskBand.className = "";
+
+
+                riskBand.classList.add(
+                    prediction.risk_band
+                        .toLowerCase()
+                );
+
+
+                /* =========================
+                   DECISION
+                ========================= */
+
+                const decision =
+                    document.getElementById(
+                        "decision"
+                    );
+
+
+                decision.textContent =
+                    prediction.decision;
+
+
+                /* =========================
+                   DECISION MESSAGE
+                ========================= */
+
+                const decisionMessage =
+                    document.getElementById(
+                        "decisionMessage"
+                    );
+
+
+                if (
+                    prediction.decision ===
+                    "APPROVE"
+                ) {
+
+                    decisionMessage.textContent =
+                        "Low return risk. The transaction can be approved.";
+
+                }
+
+                else if (
+                    prediction.decision ===
+                    "VERIFY"
+                ) {
+
+                    decisionMessage.textContent =
+                        "Additional verification is recommended before approval.";
+
+                }
+
+                else {
+
+                    decisionMessage.textContent =
+                        "High return risk. Send the transaction for manual review.";
+
+                }
+
+
+                /* =========================
+                   CUSTOMER STATUS
+                ========================= */
+
+                document.getElementById(
+                    "new_user"
+                ).textContent =
+                    prediction.is_new_user
+                        ? "New User"
+                        : "Existing User";
+
+
+                /* =========================
+                   CALIBRATED PROBABILITY
+                ========================= */
+
+                document.getElementById(
+                    "probability"
+                ).textContent =
+                    (
+                        Number(
+                            prediction.calibrated_probability
+                        ) * 100
+                    ).toFixed(2)
+                    + "%";
+
+
+                /* =========================
+                   MODEL
+                ========================= */
+
+                document.getElementById(
+                    "model"
+                ).textContent =
+                    prediction.model +
+                    " (" +
+                    prediction.model_iterations +
+                    " iterations)";
+
+
+                /* =========================
+                   RISK EXPLANATION
+                ========================= */
+
+                const explanationList =
+                    document.getElementById(
+                        "risk_explanation"
+                    );
+
+
+                explanationList.innerHTML = "";
+
+
+                if (
+                    Array.isArray(
+                        prediction.risk_explanation
+                    )
+                ) {
+
+                    prediction.risk_explanation
+                        .forEach(
+                            function(reason) {
+
+                                const listItem =
+                                    document.createElement(
+                                        "li"
+                                    );
+
+                                listItem.textContent =
+                                    reason;
+
+                                explanationList
+                                    .appendChild(
+                                        listItem
+                                    );
+
+                            }
+                        );
+
+                }
+
+                else {
+
+                    const listItem =
+                        document.createElement(
+                            "li"
+                        );
+
+                    listItem.textContent =
+                        "Risk explanation unavailable.";
+
+                    explanationList.appendChild(
+                        listItem
+                    );
+
+                }
+
+
+                /* =========================
+                   SHOW RESULT
+                ========================= */
+
+                resultBox.style.display =
+                    "block";
+
+
+                resultBox.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+
+            }
+
+
+            catch (error) {
+
+                errorBox.textContent =
+                    error.message ||
+                    "Unable to connect to ReturnGuard API.";
+
+                errorBox.style.display =
+                    "block";
+
+            }
+
+
+            finally {
+
+                loading.style.display =
+                    "none";
+
+                button.disabled =
+                    false;
+
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>

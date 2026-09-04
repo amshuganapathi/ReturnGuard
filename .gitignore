@@ -1,0 +1,49 @@
+# Python virtual environment
+venv/
+.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+
+# Large/raw datasets
+data/BADS_WS2021_known.csv
+
+# Local temporary files
+*.log
+*.tmp
+
+# Secrets
+.env
+.env.*
+!.env.example
+# CatBoost training logs
+catboost_info/
+
+# Experimental / oversized model
+models/returnguard_xgboost.json
+
+# Experimental model artifacts
+models/returnguard_bads_catboost.cbm
+models/returnguard_bads_improved.cbm
+models/returnguard_final.cbm
+models/returnguard_final_temporal.cbm
+models/returnguard_asof.cbm
+models/returnguard_cold_start.cbm
+models/returnguard_model.pkl
+models/returnguard_random_forest.pkl
+models/returnguard_temporal_v2.cbm
+models/returnguard_catboost_model.pkl
+models/returnguard_real_model.pkl
+models/random_forest_features.pkl
+models/returnguard_calibrator.pkl
