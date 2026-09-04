@@ -62,3 +62,19 @@ Risk Score + Risk Band + Decision
 Explanation
      ↓
 Web Dashboard
+```markdown
+---
+
+# Dataset
+
+ReturnGuard was trained and evaluated using the **BADS 2020/2021 e-commerce returns dataset**.
+
+The full training dataset is intentionally excluded from this public repository.
+
+For reproducible demonstration and serving from a fresh GitHub clone, this repository includes a small demo history file:
+
+`data/demo_historical_data.csv`
+
+The application automatically uses the full BADS dataset when it is available locally, and falls back to the demo history when the full dataset is unavailable.
+
+The demo history is provided only for demonstrating the prediction pipeline. The reported model metrics are based on the complete chronological evaluation described in this README and are not calculated from the demo history.
