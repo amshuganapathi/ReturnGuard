@@ -22,6 +22,7 @@ import pandas as pd
 
 
 DATA_FILE = "data/BADS_WS2021_known.csv"
+DEMO_DATA_FILE = "data/demo_historical_data.csv"
 
 INITIAL_GLOBAL_PRIOR = 0.50
 
@@ -120,13 +121,19 @@ REQUIRED_INPUT_FIELDS = [
 
 def load_historical_data():
 
-    if not os.path.exists(DATA_FILE):
-
+    # Use the full private dataset when available.
+    # The public GitHub repository uses the smaller demo dataset.
+    if os.path.exists(DATA_FILE):
+        data_file = DATA_FILE
+    elif os.path.exists(DEMO_DATA_FILE):
+        data_file = DEMO_DATA_FILE
+    else:
         raise FileNotFoundError(
-            f"Historical dataset not found: {DATA_FILE}"
+            "No historical dataset available. "
+            f"Expected either {DATA_FILE} or {DEMO_DATA_FILE}"
         )
 
-    df = pd.read_csv(DATA_FILE)
+    df = pd.read_csv(data_file)
 
     # --------------------------------------------------------
     # Convert dates
